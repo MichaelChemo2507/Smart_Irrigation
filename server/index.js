@@ -16,7 +16,8 @@ app.use(morgan('dev'));
 dotenv.config();
 
 //------------------------------------------------
-
+const sensorsRout = require('./routes/sensorsRout')
+app.use('/sensors', sensorsRout);
 //------------------------------------------------
 
 app.listen(port, () => {
