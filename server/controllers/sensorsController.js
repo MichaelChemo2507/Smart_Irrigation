@@ -16,7 +16,7 @@ const findSensorById = async (req, res) => {
     let { id } = req.params;
     const sensor = await sensorsService.findSensorById(id);
 
-    if (sensor) res.json(sensor);
+    if (sensor.length > 0) res.json(sensor);
     else res.status(404).json({ message: "sensr not found" });
 
   } catch (error) {
