@@ -24,10 +24,26 @@ const findSensorById = async (req, res) => {
 const addSensor = async (req, res) => {
   try {
     let { name, isRunning } = req.body;
-    const insertId = await sensorsService.addSensor([String(name), Number(isRunning)]);
+    const insertId = await sensorsService.addSensor([
+      String(name),
+      Number(isRunning),
+    ]);
     res.json(insertId);
   } catch (error) {
     console.error("Error in adding new sensor:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+const deleteSensor = async (req, res) => {
+  try {
+    let { id } = req.params;
+    const affectedRows = await sensorsService.deleteSensor(id);
+    console.log(affectedRows);
+    
+    if (affectedRows < 1) res.status(404).json({ message: `id ${id} is not exist` });
+    else res.status(204).json({ message: `row ${id} is deleted` });
+  } catch (error) {
+    console.error("Error in Finding Sensor By Id:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -35,4 +51,5 @@ module.exports = {
   getAll: getAll,
   findSensorById: findSensorById,
   addSensor: addSensor,
+  deleteSensor: deleteSensor,
 };
