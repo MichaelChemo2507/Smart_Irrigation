@@ -1,4 +1,4 @@
-const mysql = require('pg');
+const mysql = require('mysql2/promise');
 
 const HOST = process.env.HOST;
 const USER = process.env.USER;
