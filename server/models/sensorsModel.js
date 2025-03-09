@@ -43,6 +43,14 @@ class Sensors {
   }
   static async addMultipleSensors(values) {}
   static async updateSensor(values) {}
-  static async deleteSensor(values) {}
+  static async deleteSensor(values) {
+    try {
+      const sql = "DELETE FROM `sensors` WHERE `id` = ?";
+      const [rows, fields] = await connection.pool.execute(sql, [values]);
+      return rows;
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 }
 module.exports = Sensors;
