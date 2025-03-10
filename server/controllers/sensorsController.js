@@ -68,11 +68,11 @@ const updateSensor = async (req, res) => {
       id,
     ]);
     if (affectedRows < 1)
-      res.status(404).json({ message: `id ${id} is not exist` });
-    else res.status(204).json({ message: `row ${id} is updated` });
+      res.status(404).json({success:false, message: `id ${id} is not exist` });
+    else res.status(204).json({ success:true, message: `row ${id} is updated` });
   } catch (error) {
     console.error("Error in Updating Sensor By Id:", error.message);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({success:false, message: "Internal server error" });
   }
 };
 module.exports = {

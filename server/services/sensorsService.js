@@ -18,9 +18,14 @@ const deleteSensor = async (values) => {
   return rows.affectedRows;
 };
 const updateSensor = async (values) => {
-  let rows = await Sensors.updateSensor(values);
-  if (rows == undefined) throw new Error("undefinde received!");
-  return rows.affectedRows;
+  try {
+    let rows = await Sensors.updateSensor(values);
+    if (rows === undefined) throw new Error("No rows received from the DB!");
+    return rows.affectedRows;
+  } catch (err) {
+    console.error(`Error in service updateSensor: ${err.message}`);
+    throw new Error("Failed to update sensor due to an internal error.");
+  }
 };
 
 module.exports = {
