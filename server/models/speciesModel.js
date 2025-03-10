@@ -60,7 +60,7 @@ class Species {
       throw err;
     }
   }
-  static async deleteSensor(values) {
+  static async deleteSpecies(values) {
     try {
       if (!values) throw new Error("invalid values received!");
       if (!Array.isArray(values)) values = [values];
