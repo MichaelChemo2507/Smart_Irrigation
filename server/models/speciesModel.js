@@ -64,12 +64,15 @@ class Species {
     try {
       if (!values) throw new Error("invalid values received!");
       if (!Array.isArray(values)) values = [values];
-      const sql = "DELETE FROM `species` WHERE `id` = ?";
-      const [rows, fields] = await connection.pool.execute(sql, [values]);
+      const sql = "DELETE FROM `species` WHERE ?;";
+      const [rows, fields] = await connection.pool.execute(sql, values);
 
       return rows;
     } catch (err) {
-      console.error("Error in speciesModel level! - ", err.message);
+      console.error(
+        "Error in speciesModel level! - ",
+        err.message + " " + values
+      );
       throw err;
     }
   }

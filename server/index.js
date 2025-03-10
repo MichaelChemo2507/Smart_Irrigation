@@ -17,6 +17,8 @@ dotenv.config();
 //------------------------------------------------
 const sensorsRout = require('./routes/sensorsRout')
 app.use('/sensors', sensorsRout);
+const speciesRout = require('./routes/speciesRout')
+app.use('/species', speciesRout);
 //------------------------------------------------
 
 app.listen(port, () => {

@@ -74,7 +74,7 @@ class Sensors {
       if (!values) throw new Error("invalid values received!");
       if (!Array.isArray(values)) values = [values];
       const sql = "DELETE FROM `sensors` WHERE `id` = ?";
-      const [rows, fields] = await connection.pool.execute(sql, [values]);
+      const [rows, fields] = await connection.pool.execute(sql, values);
 
       return rows;
     } catch (err) {
