@@ -17,10 +17,16 @@ const deleteSensor = async (values) => {
   if (rows == undefined) throw new Error("undefinde received!");
   return rows.affectedRows;
 };
+const updateSensor = async (values) => {
+  let rows = await Sensors.updateSensor(values);
+  if (rows == undefined) throw new Error("undefinde received!");
+  return rows.affectedRows;
+};
 
 module.exports = {
   getAll: getAll,
   findSensorById: findSensorById,
   addSensor: addSensor,
   deleteSensor: deleteSensor,
+  updateSensor:updateSensor
 };
