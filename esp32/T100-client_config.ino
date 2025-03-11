@@ -20,8 +20,8 @@ void WiFi_SETUP() {
   Serial.println("");
   Serial.println("Wifi conected");
 }
-int get_state() {
-  int ret = -1;
+String get_state() {
+  String ret = "-1";
   HTTPClient http;
   http.begin(client, "http://" + ipAddrass + ":" + port + "/esp/state");
   int httpCode = http.GET();
@@ -31,7 +31,7 @@ int get_state() {
     Serial.println(httpCode);
     String Res = http.getString();
     Serial.println(Res);
-    ret = Res.toInt();
+    ret = Res;
   }
   http.end();
 
