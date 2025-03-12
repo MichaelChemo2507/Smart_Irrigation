@@ -5,16 +5,18 @@
 #define SHABBAT_MODE 84
 #define MENUAL_MODE 86
 
-JsonDocument doc;
+JsonDocument obj;
 long chackServer;
 unsigned long lastTimeChackedServer;
 int status;
-String currentDate;
+int irrigationCnt;
+String currentTime;
 
 void setup() {
   millisToChackServer = 1000 * 60 * 10;
   lastTimeChackedServer = millis();
   status = -1;
+  irrigationCnt = 0;
 
   Serial.begin(115200);
   temp_setup();
@@ -28,28 +30,55 @@ void loop() {
     lastTimeChackedServer = millis();
     String json = GetState();
     if (json != "-1") {
-      deserializeJson(doc, json);
-      status = doc["state"];
-      currentDate = doc["date"];
+      deserializeJson(obj, json);
+      status = obj["state"];
+      currentTime = obj["time"];
     } else {
       state = -1;
       Serial.println("no response!");
     }
   }
-  switch(state){
+  switch (state) {
     case SHABBAT_MODE:
-    break;
+      break;
 
     case TEMP_MODE:
-    break;
+      float currentTemp read_temp();
+      String json = get_data_mode("tempMode");
+      deserializeJson(obj, json);
+      int preferTemp = obj["preferTemp"];
+      int minTime = obj["minTime"];
+      int maxTime = obj["maxTime"];
 
-    case: MOISTURE_MODE:
-    break;
+      int currentLight = getLight();
+      if (irrigationCnt < 2) {
+        if (currentTemp > preferTemp) {
+          if (currentTime > "17:00" || currentTime < "06:00") {
+            irrigation(maxTime);
+            irrigationCnt++;
+          } else if (currentLight < 40) {
+            irrigation(maxTime);
+            irrigationCnt++;
+          }
+        } else {
+          if (currentTime > "17:00" || currentTime < "06:00") {
+            irrigation(minTime);
+            irrigationCnt++;
+          } else if (currentLight < 40) {
+            irrigation(minTime);
+            irrigationCnt++;
+          }
+        }
+      }
+      break;
+
+    case:
+MOISTURE_MODE:
+      break;
 
     case MENUAL_MODE:
-    break;
+      break;
 
     default:
-     
   }
 }
