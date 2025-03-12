@@ -1,4 +1,4 @@
-const Species = require("../models/speciesModel");
+const Species = require("../models/species.model");
 class SpeciesService {
   static async getAll() {
     try {

@@ -1,4 +1,4 @@
-const speciesService = require("../services/speciesService");
+const speciesService = require("../services/species.service");
 
 class SpeciesController {
   static async getAll(req, res) {
