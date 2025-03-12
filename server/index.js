@@ -15,10 +15,12 @@ app.use(cors());
 app.use(morgan('dev'));
 dotenv.config();
 //------------------------------------------------
-const sensorsRout = require('./routes/sensorsRout')
+const sensorsRout = require('./routes/sensors.rout')
 app.use('/sensors', sensorsRout);
-const speciesRout = require('./routes/speciesRout')
+const speciesRout = require('./routes/species.rout')
 app.use('/species', speciesRout);
+const plantsRout = require('./routes/plants.rout')
+app.use('/plants', plantsRout);
 //------------------------------------------------
 
 app.listen(port, () => {
