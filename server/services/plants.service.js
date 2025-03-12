@@ -30,7 +30,7 @@ class PlantsService {
       throw new Error("Failed to add Plant due to an internal error.");
     }
   }
-  static async deletePlants(values) {
+  static async deletePlant(values) {
     try {
       let rows = await Plants.deletePlant(values);
       if (rows == undefined) throw new Error("No rows received from the DB!");
@@ -40,7 +40,7 @@ class PlantsService {
       throw new Error("Failed to delete Plant due to an internal error.");
     }
   }
-  static async updatePlants(values) {
+  static async updatePlant(values) {
     try {
       let rows = await Plants.updatePlant(values);
       if (rows === undefined) throw new Error("No rows received from the DB!");
