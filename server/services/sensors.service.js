@@ -1,4 +1,4 @@
-const Sensors = require("../models/sensorsModel");
+const Sensors = require("../models/sensors.model");
 class SensorsService {
   static async getAll() {
     try {
