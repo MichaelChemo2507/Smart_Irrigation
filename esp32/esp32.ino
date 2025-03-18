@@ -11,6 +11,8 @@ unsigned long lastTimeChackedServer;
 int status;
 int irrigationCnt;
 String currentTime;
+int millisToChackServer;
+
 
 void setup() {
   millisToChackServer = 1000 * 60 * 10;
@@ -28,22 +30,22 @@ void loop() {
 
   if (millis() - lastTimeChackedServer > millisToChackServer) {
     lastTimeChackedServer = millis();
-    String json = GetState();
+    String json = get_state();
     if (json != "-1") {
       deserializeJson(obj, json);
       status = obj["state"];
       currentTime = obj["time"];
     } else {
-      state = -1;
+      status = -1;
       Serial.println("no response!");
     }
   }
-  switch (state) {
+  switch (status) {
     case SHABBAT_MODE:
       break;
 
     case TEMP_MODE:
-      float currentTemp read_temp();
+      float currentTemp = read_temp();
       String json = get_data_mode("tempMode");
       deserializeJson(obj, json);
       int preferTemp = obj["preferTemp"];
@@ -72,8 +74,7 @@ void loop() {
       }
       break;
 
-    case:
-MOISTURE_MODE:
+    case MOISTURE_MODE:
       break;
 
     case MENUAL_MODE:

@@ -34,7 +34,6 @@ String get_state() {
     ret = Res;
   }
   http.end();
-
   return ret;
 }
 String get_data_mode(String state) {
@@ -49,6 +48,5 @@ String get_data_mode(String state) {
     json = http.getString();
   }
   http.end();
-
-    return json;
+  return json;
 }
