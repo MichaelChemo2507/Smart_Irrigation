@@ -1,16 +1,20 @@
 {
-  "state": "64",
+  "state": "",
+  "time":"",
   "shabbatMod": {
     "duration": "",
     "firtIrrigation": "",
     "secondIrrigation": ""
   },
   "tempMode": {
-    "temp": "",
+    "preferTemp": "",
     "minTime": "",
     "maxTime": ""
   },
   "moistureMode": {
     "moisture": ""
-  }
+  },
+  "manualMode": {
+    "command": ""
+}
 }
