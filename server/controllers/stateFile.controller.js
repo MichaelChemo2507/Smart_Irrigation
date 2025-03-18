@@ -30,5 +30,21 @@ class StateFileController {
               .json({ success: false, message: "Internal server error" });
           }
     }
+    static async getStateData(req,res) {
+        try {
+            const stateData = await StateFileService.getStateData();
+            if (typeof stateData == typeof {}) res.json({ stateData });
+            else
+              res.status(404).json({ success: false, message: "stateData not found" });
+          } catch (error) {
+            console.error(
+              "Error in state file controller level (getStateData):",
+              error
+            );
+            res
+              .status(500)
+              .json({ success: false, message: "Internal server error" });
+          }
+    }
 }
 module.exports = StateFileController;
