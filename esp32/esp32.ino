@@ -33,8 +33,8 @@ void loop() {
     String json = get_state();
     if (json != "-1") {
       deserializeJson(obj, json);
-      status = obj["state"].as<int>();
-      currentTime = obj["time"].as<String>();
+      status = obj["stateData"]["state"].as<int>();
+      currentTime = obj["stateData"]["time"].as<String>();
     } else {
       status = -1;
       Serial.println("no response!");
