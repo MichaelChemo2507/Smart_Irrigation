@@ -23,7 +23,7 @@ void WiFi_SETUP() {
 String get_state() {
   String ret = "-1";
   HTTPClient http;
-  http.begin(client, "http://" + ipAddrass + ":" + port + "/esp/state");
+  http.begin(client, "http://" + String(ipAddrass) + ":" + String(port) + "/stateFile/state");
   int httpCode = http.GET();
   Serial.println(httpCode);
   if (httpCode == HTTP_CODE_OK) {
@@ -39,7 +39,7 @@ String get_state() {
 String get_data_mode(String state) {
   String json = "";
   HTTPClient http;
-  http.begin(client,  "http://" + ipAddrass + ":" + port + "/esp/dataMode?state=" + state);
+  http.begin(client,  "http://" + String(ipAddrass) + ":" + String(port) + "/stateFile/dataMode?state=" + String(state));
   int httpCode = http.GET();
   Serial.println(httpCode);
   if (httpCode == HTTP_CODE_OK) {

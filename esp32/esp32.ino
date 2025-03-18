@@ -33,8 +33,8 @@ void loop() {
     String json = get_state();
     if (json != "-1") {
       deserializeJson(obj, json);
-      status = obj["state"];
-      currentTime = obj["time"];
+      status = obj["state"].as<int>();
+      currentTime = obj["time"].as<String>();
     } else {
       status = -1;
       Serial.println("no response!");
@@ -42,62 +42,69 @@ void loop() {
   }
   switch (status) {
     case SHABBAT_MODE:
-      String json = get_data_mode("shabbatMod");
-      deserializeJson(obj, json);
-      int Duration = obj["duration"];
-      String FirtIrrigation = obj["firtIrrigation"];
-      String SecondIrrigation = obj["secondIrrigation"];
-      if (currentTime >= FirtIrrigation && currentTime <= FirtIrrigation + 10)
-        int ShabatIrrigationCnt += irrigation(Duration);
-      else if (currentTime >= SecondIrrigation && currentTime <= SecondIrrigation + 10)
-        int ShabatIrrigationCnt += irrigation(Duration);
-      break;
-
+      {
+        int ShabatIrrigationCnt = 0;
+        String json = get_data_mode("shabbatMod");
+        deserializeJson(obj, json);
+        int Duration = obj["duration"].as<int>();
+        String FirtIrrigation = obj["firtIrrigation"].as<String>();
+        String SecondIrrigation = obj["secondIrrigation"].as<String>();
+        if (currentTime >= FirtIrrigation && currentTime <= FirtIrrigation + 10)
+          ShabatIrrigationCnt += irrigation(Duration);
+        else if (currentTime >= SecondIrrigation && currentTime <= SecondIrrigation + 10)
+          ShabatIrrigationCnt += irrigation(Duration);
+        break;
+      }
     case TEMP_MODE:
-      float currentTemp = read_temp();
-      String json = get_data_mode("tempMode");
-      deserializeJson(obj, json);
-      int PreferTemp = obj["preferTemp"];
-      int MinTime = obj["minTime"];
-      int MaxTime = obj["maxTime"];
+      {
+        float currentTemp = read_temp();
+        String json = get_data_mode("tempMode");
+        deserializeJson(obj, json);
+        int PreferTemp = obj["preferTemp"].as<int>();
+        int MinTime = obj["minTime"].as<int>();
+        int MaxTime = obj["maxTime"].as<int>();
 
-      int currentLight = getLight();
-      if (irrigationCnt < 2) {
-        if (currentTemp > PreferTemp) {
-          if (currentTime > "17:00" || currentTime < "06:00") {
-            irrigationCnt += irrigation(MaxTime);
-          } else if (currentLight < 40) {
-            irrigationCnt += irrigation(MaxTime);
-          }
-        } else {
-          if (currentTime > "17:00" || currentTime < "06:00") {
-            irrigationCnt += irrigation(MinTime);
-          } else if (currentLight < 40) {
-            irrigationCnt += irrigation(MinTime);
+        int currentLight = getLight();
+        if (irrigationCnt < 2) {
+          if (currentTemp > PreferTemp) {
+            if (currentTime > "17:00" || currentTime < "06:00") {
+              irrigationCnt += irrigation(MaxTime);
+            } else if (currentLight < 40) {
+              irrigationCnt += irrigation(MaxTime);
+            }
+          } else {
+            if (currentTime > "17:00" || currentTime < "06:00") {
+              irrigationCnt += irrigation(MinTime);
+            } else if (currentLight < 40) {
+              irrigationCnt += irrigation(MinTime);
+            }
           }
         }
+        break;
       }
-      break;
 
     case MOISTURE_MODE:
-      int currentMoist = handleMoisture();
-      String json = get_data_mode("moistureMode");
-      deserializeJson(obj, json);
-      float PreferMoisture = obj["moisture"];
-      if (currentMoist > PreferMoisture * 1.1)
-        pumpOff();
-      else if (currentMoist < PreferMoisture * 0.9)
-        pumpOn();
-      break;
-
+      {
+        int currentMoist = handleMoisture();
+        String json = get_data_mode("moistureMode");
+        deserializeJson(obj, json);
+        float PreferMoisture = obj["moisture"].as<float>();
+        if (currentMoist > PreferMoisture * 1.1)
+          pumpOff();
+        else if (currentMoist < PreferMoisture * 0.9)
+          pumpOn();
+        break;
+      }
     case MENUAL_MODE:
-      String json = get_data_mode("manualMode");
-      deserializeJson(obj, json);
-      String ManualCommand = obj["command"];
-      if (ManualCommand == "ON")
-        pumpOn();
-      else if (ManualCommand == "OFF")
-        pumpOff();
-      break;
+      {
+        String json = get_data_mode("manualMode");
+        deserializeJson(obj, json);
+        String ManualCommand = obj["command"];
+        if (ManualCommand == "ON")
+          pumpOn();
+        else if (ManualCommand == "OFF")
+          pumpOff();
+        break;
+      }
   }
 }
