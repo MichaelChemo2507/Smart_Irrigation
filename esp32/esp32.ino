@@ -42,6 +42,15 @@ void loop() {
   }
   switch (status) {
     case SHABBAT_MODE:
+      String json = get_data_mode("shabbatMod");
+      deserializeJson(obj, json);
+      int Duration = obj["duration"];
+      String FirtIrrigation = obj["firtIrrigation"];
+      String SecondIrrigation = obj["secondIrrigation"];
+      if (currentTime >= FirtIrrigation && currentTime <= FirtIrrigation + 10)
+        int ShabatIrrigationCnt += irrigation(Duration);
+      else if (currentTime >= SecondIrrigation && currentTime <= SecondIrrigation + 10)
+        int ShabatIrrigationCnt += irrigation(Duration);
       break;
 
     case TEMP_MODE:

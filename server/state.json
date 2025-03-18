@@ -2,7 +2,7 @@
   "state": "64",
   "time":"",
   "shabbatMod": {
-    "duration": "",
+    "duration": 10,
     "firtIrrigation": "",
     "secondIrrigation": ""
   },
