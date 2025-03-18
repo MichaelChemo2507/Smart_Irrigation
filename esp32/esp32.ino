@@ -91,6 +91,13 @@ void loop() {
       break;
 
     case MENUAL_MODE:
+      String json = get_data_mode("manualMode");
+      deserializeJson(obj, json);
+      String ManualCommand = obj["command"];
+      if (ManualCommand == "ON")
+        pumpOn();
+      else if (ManualCommand == "OFF")
+        pumpOff();
       break;
   }
 }
