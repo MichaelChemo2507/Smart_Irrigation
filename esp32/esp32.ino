@@ -46,9 +46,9 @@ void loop() {
         int ShabatIrrigationCnt = 0;
         String json = get_data_mode("shabbatMod");
         deserializeJson(obj, json);
-        int Duration = obj["duration"].as<int>();
-        String FirtIrrigation = obj["firtIrrigation"].as<String>();
-        String SecondIrrigation = obj["secondIrrigation"].as<String>();
+        int Duration = obj["mode"]["duration"].as<int>();
+        String FirtIrrigation = obj["mode"]["firtIrrigation"].as<String>();
+        String SecondIrrigation = obj["mode"]["secondIrrigation"].as<String>();
         if (currentTime >= FirtIrrigation && currentTime <= FirtIrrigation + 10)
           ShabatIrrigationCnt += irrigation(Duration);
         else if (currentTime >= SecondIrrigation && currentTime <= SecondIrrigation + 10)
@@ -60,9 +60,9 @@ void loop() {
         float currentTemp = read_temp();
         String json = get_data_mode("tempMode");
         deserializeJson(obj, json);
-        int PreferTemp = obj["preferTemp"].as<int>();
-        int MinTime = obj["minTime"].as<int>();
-        int MaxTime = obj["maxTime"].as<int>();
+        int PreferTemp = obj["mode"]["preferTemp"].as<int>();
+        int MinTime = obj["mode"]["minTime"].as<int>();
+        int MaxTime = obj["mode"]["maxTime"].as<int>();
 
         int currentLight = getLight();
         if (irrigationCnt < 2) {
@@ -88,7 +88,7 @@ void loop() {
         int currentMoist = handleMoisture();
         String json = get_data_mode("moistureMode");
         deserializeJson(obj, json);
-        float PreferMoisture = obj["moisture"].as<float>();
+        float PreferMoisture = obj["mode"]["moisture"].as<float>();
         if (currentMoist > PreferMoisture * 1.1)
           pumpOff();
         else if (currentMoist < PreferMoisture * 0.9)
@@ -99,7 +99,7 @@ void loop() {
       {
         String json = get_data_mode("manualMode");
         deserializeJson(obj, json);
-        String ManualCommand = obj["command"];
+        String ManualCommand = obj["mode"]["command"];
         if (ManualCommand == "ON")
           pumpOn();
         else if (ManualCommand == "OFF")
