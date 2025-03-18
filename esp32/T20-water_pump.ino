@@ -21,3 +21,10 @@ int irrigation(int duration) {
   }
   return res;
 }
+
+void pumpOn() {
+  digitalWrite(WATER_PUMP_PIN, HIGH);
+}
+void pumpOff() {
+  digitalWrite(WATER_PUMP_PIN, LOW);
+}

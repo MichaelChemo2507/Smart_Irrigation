@@ -71,12 +71,17 @@ void loop() {
       break;
 
     case MOISTURE_MODE:
+      int currentMoist = handleMoisture();
+      String json = get_data_mode("moistureMode");
+      deserializeJson(obj, json);
+      float PreferMoisture = obj["moisture"];
+      if (currentMoist > PreferMoisture * 1.1)
+        pumpOff();
+      else if (currentMoist < PreferMoisture * 0.9)
+        pumpOn();
       break;
 
     case MENUAL_MODE:
       break;
-
-    default:
-    break;
   }
 }
