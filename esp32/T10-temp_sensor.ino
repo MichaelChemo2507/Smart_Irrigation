@@ -13,6 +13,3 @@ float read_temp() {
   return dht.readTemperature();
 }
 
-void irrigation(int duration){
-  
-}

@@ -48,27 +48,23 @@ void loop() {
       float currentTemp = read_temp();
       String json = get_data_mode("tempMode");
       deserializeJson(obj, json);
-      int preferTemp = obj["preferTemp"];
-      int minTime = obj["minTime"];
-      int maxTime = obj["maxTime"];
+      int PreferTemp = obj["preferTemp"];
+      int MinTime = obj["minTime"];
+      int MaxTime = obj["maxTime"];
 
       int currentLight = getLight();
       if (irrigationCnt < 2) {
-        if (currentTemp > preferTemp) {
+        if (currentTemp > PreferTemp) {
           if (currentTime > "17:00" || currentTime < "06:00") {
-            irrigation(maxTime);
-            irrigationCnt++;
+            irrigationCnt += irrigation(MaxTime);
           } else if (currentLight < 40) {
-            irrigation(maxTime);
-            irrigationCnt++;
+            irrigationCnt += irrigation(MaxTime);
           }
         } else {
           if (currentTime > "17:00" || currentTime < "06:00") {
-            irrigation(minTime);
-            irrigationCnt++;
+            irrigationCnt += irrigation(MinTime);
           } else if (currentLight < 40) {
-            irrigation(minTime);
-            irrigationCnt++;
+            irrigationCnt += irrigation(MinTime);
           }
         }
       }
@@ -81,5 +77,6 @@ void loop() {
       break;
 
     default:
+    break;
   }
 }
