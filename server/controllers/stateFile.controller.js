@@ -12,6 +12,23 @@ class StateFileController {
       console.error("Error in stateFile controller level (getAll):", error);
       res.status(500).json({success: false, message: "Internal server error" });
     }
-  }
+    }
+    static async getStatusDataByStatusName(req, res) {
+        try {
+            let { statusMode } = req.params;
+            const mode = await StateFileService.getStatusDataByStatusName(statusMode);
+            if (typeof mode == typeof {}) res.json({ mode });
+            else
+              res.status(404).json({ success: false, message: "mode not found" });
+          } catch (error) {
+            console.error(
+              "Error in state file controller level (getStatusDataByStatusName):",
+              error
+            );
+            res
+              .status(500)
+              .json({ success: false, message: "Internal server error" });
+          }
+    }
 }
 module.exports = StateFileController;
