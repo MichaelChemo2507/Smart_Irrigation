@@ -43,8 +43,8 @@ void loop() {
     String json = get_state();
     if (json != "-1") {
       deserializeJson(obj, json);
-      status = obj["state"].as<int>();
-      currentTime = obj["time"].as<String>();
+      status = obj["stateData"]["state"].as<int>();
+      currentTime = obj["stateData"]["time"].as<String>();
     } else {
       status = -1;
       Serial.println("no response!");
@@ -64,9 +64,9 @@ void loop() {
         int ShabatIrrigationCnt = 0;
         String json = get_data_mode("shabbatMod");
         deserializeJson(obj, json);
-        int Duration = obj["duration"].as<int>();
-        String FirtIrrigation = obj["firtIrrigation"].as<String>();
-        String SecondIrrigation = obj["secondIrrigation"].as<String>();
+        int Duration = obj["mode"]["duration"].as<int>();
+        String FirtIrrigation = obj["mode"]["firtIrrigation"].as<String>();
+        String SecondIrrigation = obj["mode"]["secondIrrigation"].as<String>();
         if (currentTime >= FirtIrrigation && currentTime <= FirtIrrigation + 10)
           ShabatIrrigationCnt += irrigation(Duration);
         else if (currentTime >= SecondIrrigation && currentTime <= SecondIrrigation + 10)
@@ -78,9 +78,9 @@ void loop() {
         float currentTemp = read_temp();
         String json = get_data_mode("tempMode");
         deserializeJson(obj, json);
-        int PreferTemp = obj["preferTemp"].as<int>();
-        int MinTime = obj["minTime"].as<int>();
-        int MaxTime = obj["maxTime"].as<int>();
+        int PreferTemp = obj["mode"]["preferTemp"].as<int>();
+        int MinTime = obj["mode"]["minTime"].as<int>();
+        int MaxTime = obj["mode"]["maxTime"].as<int>();
 
         int currentLight = getLight();
         if (irrigationCnt < 2) {
@@ -107,11 +107,7 @@ void loop() {
         String json = get_data_mode("moistureMode");
         deserializeJson(obj, json);
         float PreferMoisture = obj["moisture"].as<float>();
-        if (currentMoist > PreferMoisture * 1.1) {
-          if (isStartIrrigation) {
-            totalIrrigationTime += (millis() - startIrrigation);
-            isStartIrrigation = false;
-          }
+        if (currentMoist > PreferMoisture * 1.1)
           pumpOff();
         } else if (currentMoist < PreferMoisture * 0.9) {
           if (!isStartIrrigation) {
@@ -127,11 +123,7 @@ void loop() {
         String json = get_data_mode("manualMode");
         deserializeJson(obj, json);
         String ManualCommand = obj["command"];
-        if (ManualCommand == "ON") {
-          if (!isStartIrrigation) {
-            startIrrigation = millis();
-            isStartIrrigation = true;
-          }
+        if (ManualCommand == "ON")
           pumpOn();
         } else if (ManualCommand == "OFF") {
           if (isStartIrrigation) {
