@@ -1,52 +1,138 @@
-//--Library--------------------------
-#include <DHT.h>
-#define DHTTYPE DHT11 
-//--WaterPump------------------------
-#define OFF 0 
-#define LEFT 16
-#define RIGHT 17
-//--SensorPin------------------------
-#define LIGHT 36
-#define TEMP 16
-#define MOISTURE 36
-//--StateModes-----------------------
-#define LIGHT_MODE 60
-#define TEMP_MODE 61
-#define MOISTURE_MODE 62
-#define SHABAT_MODE 63
-#define MANUAL_MODE 64
-//--Config---------------------------
-#define ADMIN "http://10.9.2.107"
-#define PORT 3214 
-//--Variables------------------------
-DHT dht(TEMP,DHTTYPE); 
-int pumpState = OFF;
-int state = MANUAL_MODE;
-unsigned long prevStateCheckTimeStamp;
-int stateDelayMinutes = 1000 * 60 * 10;
-//-----------------------------------
-void setup()
-{
+#include <ArduinoJson.h>
+
+#define TEMP_MODE 80
+#define MOISTURE_MODE 82
+#define SHABBAT_MODE 84
+#define MENUAL_MODE 86
+
+JsonDocument obj;
+long chackServer;
+unsigned long lastTimeChackedServer;
+int status;
+int irrigationCnt;
+String currentTime;
+int millisToChackServer;
+bool isStartIrrigation;
+
+unsigned long startIrrigation;
+unsigned long totalIrrigationTime;
+
+int plantId = 1;
+int timeCnt;
+
+void setup() {
+  timeCnt = 0;
+  isStartIrrigation = false;
+  startIrrigation = 0;
+  totalIrrigationTime = 0;
+  millisToChackServer = 1000 * 60 * 10;
+  lastTimeChackedServer = millis();
+  status = -1;
+  irrigationCnt = 0;
+
   Serial.begin(115200);
+  temp_setup();
+  waterPumpSetup();
   WiFi_SETUP();
-  WaterPumpSetup();
-  TempSetup();
-  StateSetup();
 }
-//-----------------------------------
-void loop()
-{
-  // SEND_DATA( HandleTemp(), HandleLight(), HandleMoisture() );
-  // HandleWaterPump(pumpState);
 
-  if (millis() - prevStateCheckTimeStamp >= ){
-    prevStateCheckTimeStamp = millis();
-    state = GET_STATE();
+void loop() {
+
+  if (millis() - lastTimeChackedServer > millisToChackServer) {
+    lastTimeChackedServer = millis();
+    String json = get_state();
+    if (json != "-1") {
+      deserializeJson(obj, json);
+      status = obj["stateData"]["state"].as<int>();
+      currentTime = obj["stateData"]["time"].as<String>();
+    } else {
+      status = -1;
+      Serial.println("no response!");
+    }
+    if (timeCnt == 144) {  // the number of 10 minutes in a day
+      timeCnt = 0;
+      send_data(plantId, totalIrrigationTime);
+      totalIrrigationTime = 0;
+    } else
+      timeCnt++;
   }
-  HandleState(state);
-  delay(1000);
+
+
+  switch (status) {
+    case SHABBAT_MODE:
+      {
+        int ShabatIrrigationCnt = 0;
+        String json = get_data_mode("shabbatMod");
+        deserializeJson(obj, json);
+        int Duration = obj["mode"]["duration"].as<int>();
+        String FirtIrrigation = obj["mode"]["firtIrrigation"].as<String>();
+        String SecondIrrigation = obj["mode"]["secondIrrigation"].as<String>();
+        if (currentTime >= FirtIrrigation && currentTime <= FirtIrrigation + 10)
+          ShabatIrrigationCnt += irrigation(Duration);
+        else if (currentTime >= SecondIrrigation && currentTime <= SecondIrrigation + 10)
+          ShabatIrrigationCnt += irrigation(Duration);
+        break;
+      }
+    case TEMP_MODE:
+      {
+        float currentTemp = read_temp();
+        String json = get_data_mode("tempMode");
+        deserializeJson(obj, json);
+        int PreferTemp = obj["mode"]["preferTemp"].as<int>();
+        int MinTime = obj["mode"]["minTime"].as<int>();
+        int MaxTime = obj["mode"]["maxTime"].as<int>();
+
+        int currentLight = getLight();
+        if (irrigationCnt < 2) {
+          if (currentTemp > PreferTemp) {
+            if (currentTime > "17:00" || currentTime < "06:00") {
+              irrigationCnt += irrigation(MaxTime);
+            } else if (currentLight < 40) {
+              irrigationCnt += irrigation(MaxTime);
+            }
+          } else {
+            if (currentTime > "17:00" || currentTime < "06:00") {
+              irrigationCnt += irrigation(MinTime);
+            } else if (currentLight < 40) {
+              irrigationCnt += irrigation(MinTime);
+            }
+          }
+        }
+        break;
+      }
+
+    case MOISTURE_MODE:
+      {
+        int currentMoist = handleMoisture();
+        String json = get_data_mode("moistureMode");
+        deserializeJson(obj, json);
+        float PreferMoisture = obj["mode"]["moisture"].as<float>();
+        if (currentMoist > PreferMoisture * 1.1)
+          pumpOff();
+        } else if (currentMoist < PreferMoisture * 0.9) {
+          if (!isStartIrrigation) {
+            startIrrigation = millis();
+            isStartIrrigation = true;
+          }
+          pumpOn();
+        }
+        break;
+      }
+    case MENUAL_MODE:
+      {
+        String json = get_data_mode("manualMode");
+        deserializeJson(obj, json);
+        String ManualCommand = obj["mode"]["command"];
+        if (ManualCommand == "ON")
+          pumpOn();
+        } else if (ManualCommand == "OFF") {
+          if (isStartIrrigation) {
+            totalIrrigationTime += (millis() - startIrrigation);
+            isStartIrrigation = false;
+          }
+          pumpOff();
+        }
+        break;
+      }
+  }
 }
-//-----------------------------------
-
-
-
