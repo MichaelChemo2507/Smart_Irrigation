@@ -30,6 +30,16 @@ class StateFileService {
             throw new Error("Failed to read StateFile due to an internal error.");
         }
     }
+    static async updateStatus(values) {
+        try { 
+            let rows = await StateFile.getStateData();
+            if (rows == undefined) throw new Error("No data received!");
+            return rows;
+        } catch (err) {
+            console.error(`Error in service getStateData: ${err.message}`);
+            throw new Error("Failed to read StateFile due to an internal error.");
+        } 
+    }
 }
 
 module.exports = StateFileService;
