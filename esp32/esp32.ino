@@ -106,7 +106,7 @@ void loop() {
         int currentMoist = handleMoisture();
         String json = get_data_mode("moistureMode");
         deserializeJson(obj, json);
-        float PreferMoisture = obj["moisture"].as<float>();
+        float PreferMoisture = obj["mode"]["moisture"].as<float>();
         if (currentMoist > PreferMoisture * 1.1)
           pumpOff();
         } else if (currentMoist < PreferMoisture * 0.9) {
@@ -122,7 +122,7 @@ void loop() {
       {
         String json = get_data_mode("manualMode");
         deserializeJson(obj, json);
-        String ManualCommand = obj["command"];
+        String ManualCommand = obj["mode"]["command"];
         if (ManualCommand == "ON")
           pumpOn();
         } else if (ManualCommand == "OFF") {
