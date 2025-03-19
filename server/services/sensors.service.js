@@ -1,9 +1,10 @@
-const Sensors = require("../models/sensorsModel");
+const Sensors = require("../models/sensors.model");
 class SensorsService {
   static async getAll() {
     try {
       let rows = await Sensors.getAll();
       if (rows == undefined) throw new Error("No rows received from the DB!");
+      return rows;
     } catch (err) {
       console.error(`Error in service getAll: ${err.message}`);
       throw new Error("Failed to update sensor due to an internal error.");

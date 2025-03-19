@@ -1,4 +1,4 @@
-const sensorsService = require("../services/sensorsService");
+const sensorsService = require("../services/sensors.service");
 class SensorsController {
   static async getAll(req, res) {
     try {
