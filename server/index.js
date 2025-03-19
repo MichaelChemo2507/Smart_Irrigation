@@ -21,6 +21,8 @@ const speciesRout = require("./routes/species.rout");
 app.use("/species", speciesRout);
 const plantsRout = require("./routes/plants.rout");
 app.use("/plants", plantsRout);
+const sensorData = require("./routes/sensorData.rout");
+app.use("/sensorData", sensorData);
 const stateFileRout = require("./routes/stateFile.rout");
 app.use("/stateFile", stateFileRout);
 //------------------------------------------------

@@ -1,4 +1,4 @@
-const SensorData = require("../models/sensorData.model");
+const SensorDataModel = require("../models/sensorData.model");
 class SensorData {
   static async getAll() {
    
@@ -8,7 +8,7 @@ class SensorData {
   }
   static async addSensorData(values) {
     try {
-      let rows = await SensorData.addSensorData(values);
+      let rows = await SensorDataModel.addSensorData(values);
       if (rows == undefined) throw new Error("No rows received from the DB!");
       return rows.affectedRows;
     } catch (err) {

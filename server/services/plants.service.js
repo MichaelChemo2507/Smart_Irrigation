@@ -12,7 +12,7 @@ class PlantsService {
   }
   static async findPlantById(values) {
     try {
-      let rows = await Plants.findSpeciesById(values);
+      let rows = await Plants.findPlantById(values);
       if (rows == undefined) throw new Error("No rows received from the DB!");
       return rows;
     } catch (err) {
