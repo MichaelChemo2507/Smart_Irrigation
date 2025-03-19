@@ -12,9 +12,19 @@ int status;
 int irrigationCnt;
 String currentTime;
 int millisToChackServer;
+bool isStartIrrigation;
 
+unsigned long startIrrigation;
+unsigned long totalIrrigationTime;
+
+int plantId = 1;
+int timeCnt;
 
 void setup() {
+  timeCnt = 0;
+  isStartIrrigation = false;
+  startIrrigation = 0;
+  totalIrrigationTime = 0;
   millisToChackServer = 1000 * 60 * 10;
   lastTimeChackedServer = millis();
   status = -1;
@@ -39,7 +49,15 @@ void loop() {
       status = -1;
       Serial.println("no response!");
     }
+    if (timeCnt == 144) {  // the number of 10 minutes in a day
+      timeCnt = 0;
+      send_data(plantId, totalIrrigationTime);
+      totalIrrigationTime = 0;
+    } else
+      timeCnt++;
   }
+
+
   switch (status) {
     case SHABBAT_MODE:
       {
@@ -89,10 +107,19 @@ void loop() {
         String json = get_data_mode("moistureMode");
         deserializeJson(obj, json);
         float PreferMoisture = obj["moisture"].as<float>();
-        if (currentMoist > PreferMoisture * 1.1)
+        if (currentMoist > PreferMoisture * 1.1) {
+          if (isStartIrrigation) {
+            totalIrrigationTime += (millis() - startIrrigation);
+            isStartIrrigation = false;
+          }
           pumpOff();
-        else if (currentMoist < PreferMoisture * 0.9)
+        } else if (currentMoist < PreferMoisture * 0.9) {
+          if (!isStartIrrigation) {
+            startIrrigation = millis();
+            isStartIrrigation = true;
+          }
           pumpOn();
+        }
         break;
       }
     case MENUAL_MODE:
@@ -100,10 +127,19 @@ void loop() {
         String json = get_data_mode("manualMode");
         deserializeJson(obj, json);
         String ManualCommand = obj["command"];
-        if (ManualCommand == "ON")
+        if (ManualCommand == "ON") {
+          if (!isStartIrrigation) {
+            startIrrigation = millis();
+            isStartIrrigation = true;
+          }
           pumpOn();
-        else if (ManualCommand == "OFF")
+        } else if (ManualCommand == "OFF") {
+          if (isStartIrrigation) {
+            totalIrrigationTime += (millis() - startIrrigation);
+            isStartIrrigation = false;
+          }
           pumpOff();
+        }
         break;
       }
   }

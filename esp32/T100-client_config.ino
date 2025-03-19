@@ -39,7 +39,7 @@ String get_state() {
 String get_data_mode(String state) {
   String json = "";
   HTTPClient http;
-  http.begin(client,  "http://" + String(ipAddrass) + ":" + String(port) + "/stateFile/dataMode?state=" + String(state));
+  http.begin(client, "http://" + String(ipAddrass) + ":" + String(port) + "/stateFile/dataMode?state=" + String(state));
   int httpCode = http.GET();
   Serial.println(httpCode);
   if (httpCode == HTTP_CODE_OK) {
@@ -49,4 +49,13 @@ String get_data_mode(String state) {
   }
   http.end();
   return json;
+}
+void send_data(int plantId, unsigned long totalIrrigationTime) {
+
+  String json = "totalIrrigation=" + String(totalIrrigationTime / 60 / 1000);
+  HTTPClient http;
+  http.begin(client, "http://" + String(ipAddrass) + ":" + String(port) + "/sensorData/" + String(plantId));
+  int httpCode = http.POST(json);
+  Serial.println(httpCode);
+  http.end();
 }

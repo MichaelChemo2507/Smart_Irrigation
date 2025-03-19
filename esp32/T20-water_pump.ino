@@ -18,6 +18,7 @@ int irrigation(int duration) {
     digitalWrite(WATER_PUMP_PIN, LOW);
     isStart = false;
     res = 1;
+    totalIrrigationTime += duration * 60 * 1000;
   }
   return res;
 }
