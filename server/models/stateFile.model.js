@@ -1,13 +1,6 @@
 const fs = require("fs");
 const state = require("../stateFile.json");
 
-// fs.writeFile(
-//     "stateFile.json",
-//     JSON.stringify(),
-//     err => {
-//         if (err) throw err;
-//         console.log("Done writing");
-//     });
 class StateFile {
   static async getAll() {
     try {
